@@ -35,6 +35,8 @@ function Signup() {
         email: email,
         password: password,
       }),
+    }).then((res) => {
+      history.push("/login");
     });
   };
 
