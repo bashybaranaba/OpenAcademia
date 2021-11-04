@@ -22,7 +22,8 @@ function Signup() {
 
   const history = useHistory();
 
-  const handleSubmit = () => {
+  const handleSubmit = (event) => {
+    event.preventDefault();
     fetch("http://localhost:5000/signup", {
       method: "post",
       headers: {
@@ -35,9 +36,16 @@ function Signup() {
         email: email,
         password: password,
       }),
-    }).then((res) => {
-      history.push("/login");
-    });
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          alert(data.error);
+        } else {
+          alert("Success");
+          history.push("/login");
+        }
+      });
   };
 
   return (

@@ -10,7 +10,6 @@ import Tooltip from "@mui/material/Tooltip";
 import TextField from "@mui/material/TextField";
 
 import AddIcon from "@mui/icons-material/Add";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
 function AddPost() {
   const [open, setOpen] = useState(false);
@@ -25,18 +24,28 @@ function AddPost() {
     setOpen(false);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (event) => {
+    event.preventDefault();
     fetch("http://localhost:5000/createpost", {
       method: "post",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
+        Authorization: localStorage.getItem("IdToken"),
       },
       body: JSON.stringify({
         title: title,
         body: content,
       }),
-    });
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          alert(data.error);
+        } else {
+          alert("Post successfully addded");
+          setOpen(false);
+        }
+      });
   };
   return (
     <Fragment>
@@ -69,7 +78,12 @@ function AddPost() {
               fullWidth
               onChange={(e) => setContent(e.target.value)}
             />
-            <Button onClick={handleSubmit} variant="contained" fullWidth>
+            <Button
+              sx={{ margin: 1 }}
+              onClick={handleSubmit}
+              variant="contained"
+              fullWidth
+            >
               Post
             </Button>
           </Box>

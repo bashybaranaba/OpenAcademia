@@ -17,7 +17,10 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = () => {
+  const history = useHistory();
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
     fetch("http://localhost:5000/login", {
       method: "post",
       headers: {
@@ -27,7 +30,17 @@ function Login() {
         email: email,
         password: password,
       }),
-    });
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.error) {
+          alert(data.error);
+        } else {
+          localStorage.setItem("IdToken", `Bearer ${data.token}`);
+          alert("Success");
+          history.push("/");
+        }
+      });
   };
 
   return (

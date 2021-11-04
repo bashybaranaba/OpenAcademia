@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Link } from "react-router-dom";
 
 //Components
 import SearchDialog from "./SearchDialog";
@@ -17,9 +18,7 @@ import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 
 //Icons
-import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -67,6 +66,8 @@ export default function Navbar() {
       onClose={handleMenuClose}
     >
       <MenuItem
+        component={Link}
+        to="/myprofile"
         onClick={handleMenuClose}
         sx={{ mt: 1, height: 45, width: 200 }}
       >
@@ -74,6 +75,8 @@ export default function Navbar() {
         My Profile
       </MenuItem>
       <MenuItem
+        component={Link}
+        to="/myprofile"
         onClick={handleMenuClose}
         sx={{ mt: 1, height: 45, width: 200 }}
       >
@@ -81,6 +84,8 @@ export default function Navbar() {
         Liked Posts
       </MenuItem>
       <MenuItem
+        component={Link}
+        to="/login"
         onClick={handleMenuClose}
         sx={{ mt: 1, height: 45, width: 200 }}
       >

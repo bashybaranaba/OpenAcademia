@@ -1,11 +1,15 @@
-import React from 'react'
+import React from "react";
+import Navbar from "../components/Navbar";
 
-import Profile from '../components/Profile'
+import Profile from "../components/Profile";
 
 function Myprofile() {
-    return (
-        <Profile/>
-    )
+  return (
+    <div>
+      <Navbar />
+      <Profile />
+    </div>
+  );
 }
 
-export default Myprofile
+export default Myprofile;

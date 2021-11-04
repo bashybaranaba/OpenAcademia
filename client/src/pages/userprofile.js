@@ -1,9 +1,14 @@
-import React from 'react'
+import React from "react";
 
+import Navbar from "../components/Navbar";
+import Profile from "../components/Profile";
 function Userprofile() {
-    return (
-        <div>.</div>
-    )
+  return (
+    <div>
+      <Navbar />
+      <Profile />
+    </div>
+  );
 }
 
-export default Userprofile
+export default Userprofile;

@@ -1,4 +1,5 @@
 import React, { Fragment, useState } from "react";
+import { Link } from "react-router-dom";
 
 import Box from "@mui/material/Box";
 import Divider from "@mui/material/Divider";
@@ -56,7 +57,14 @@ function AppMenu() {
         <Divider />
         <List sx={{ width: 230 }}>
           {["Home", "About", "Topics", "Support"].map((text, index) => (
-            <ListItem button key={text}>
+            <ListItem
+              button
+              key={text}
+              component={Link}
+              to={
+                index === 0 ? "/" : index === 1 ? "/" : index === 2 ? "/" : "/"
+              }
+            >
               <ListItemIcon>
                 {index === 0 ? (
                   <HomeIcon />
