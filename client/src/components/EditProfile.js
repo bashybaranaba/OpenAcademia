@@ -1,4 +1,6 @@
 import React, { Fragment, useState } from "react";
+import PropTypes from "prop-types";
+import axios from "axios";
 
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
@@ -12,8 +14,22 @@ import TextField from "@mui/material/TextField";
 
 import EditIcon from "@mui/icons-material/Edit";
 
-function EditProfile() {
+function EditProfile(props) {
+  const {
+    _id,
+    username,
+    first_name,
+    last_name,
+    followers,
+    following,
+    bio,
+    email,
+  } = props.userDetails;
+
   const [open, setOpen] = useState(false);
+  const [newbio, setBio] = useState(bio ? bio : " ");
+  const [newusername, setUsername] = useState(username);
+  const [newemail, setEmail] = useState(email);
 
   const handleOpen = () => {
     setOpen(true);
@@ -25,6 +41,16 @@ function EditProfile() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    const data = { bio: newbio, username: newusername };
+
+    axios.post(`http://localhost:5000/adduserdetails`, data).then((res) => {
+      if (res.data.error) {
+        alert(res.data.error);
+      } else {
+        alert("Profile Successfully updated");
+        setOpen(false);
+      }
+    });
   };
 
   return (
@@ -70,6 +96,8 @@ function EditProfile() {
               multiline
               rows={4}
               fullWidth
+              value={newbio}
+              onChange={(e) => setBio(e.target.value)}
             />
             <TextField
               sx={{ margin: 1 }}
@@ -78,6 +106,8 @@ function EditProfile() {
               variant="outlined"
               default="example@email.com"
               fullWidth
+              value={newemail}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <TextField
               sx={{ margin: 1 }}
@@ -86,6 +116,8 @@ function EditProfile() {
               variant="outlined"
               default="username"
               fullWidth
+              value={newusername}
+              onChange={(e) => setUsername(e.target.value)}
             />
 
             <Button
@@ -102,5 +134,9 @@ function EditProfile() {
     </Fragment>
   );
 }
+
+EditProfile.propTypes = {
+  userDetails: PropTypes.object.isRequired,
+};
 
 export default EditProfile;

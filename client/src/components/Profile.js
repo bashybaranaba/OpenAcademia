@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 //Components
 import PostCard from "./PostCard";
@@ -14,10 +15,15 @@ import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 
-function Profile() {
+function Profile(props) {
+  const { _id, username, first_name, last_name, followers, following, bio } =
+    props.userDetails;
+  const posts = props.posts;
+  const likes = props.userLikes;
+
   const followUser = (event) => {
     event.preventDefault();
-    fetch("http://localhost:5000/follow/617052fac70e5def102fd970", {
+    fetch(`http://localhost:5000/follow/${_id}`, {
       method: "put",
       headers: {
         "Content-Type": "application/json",
@@ -39,6 +45,7 @@ function Profile() {
       Follow
     </Button>
   );
+
   return (
     <Container maxWidth="md">
       <Grid align="center" sx={{ m: 2 }}>
@@ -46,41 +53,49 @@ function Profile() {
         {window.location.pathname !== "/myprofile" ? (
           followButton
         ) : (
-          <EditProfile />
+          <EditProfile userDetails={props.userDetails} />
         )}
         <Paper>
           <Box sx={{ display: "flex", m: 2 }} />
           <Box sx={{ mt: 10, mb: 1 }}>
             <Grid container spacing={1}>
               <Grid item xs={4}>
-                <Typography variant="overline">Posts: 1</Typography>
+                <Typography variant="overline">
+                  Posts: {posts && posts.length}
+                </Typography>
               </Grid>
               <Grid item xs={4}>
-                <Typography variant="overline">Followers: 10</Typography>
+                <Typography variant="overline">
+                  Followers: {followers && followers.length}
+                </Typography>
               </Grid>
               <Grid item xs={4}>
-                <Typography variant="overline">Following: 10</Typography>
+                <Typography variant="overline">
+                  Following: {following && following.length}
+                </Typography>
               </Grid>
             </Grid>
           </Box>
           <Divider />
           <Box sx={{ m: 4 }}>
             <Typography variant="h5" sx={{ m: 2 }}>
-              {window.location.pathname !== "/myprofile"
-                ? "Username"
-                : "MyProfile"}
+              {username}
             </Typography>
-            <Typography sx={{ ml: 4, mr: 4 }}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </Typography>
+            <Typography sx={{ ml: 4, mr: 4 }}>{bio && bio}</Typography>
           </Box>
           <Box sx={{ display: "flex", m: 2 }} />
         </Paper>
       </Grid>
-      <PostCard />
+      {posts &&
+        posts.map((post) => <PostCard postData={post} userLikes={likes} />)}
     </Container>
   );
 }
+
+Profile.propTypes = {
+  posts: PropTypes.object.isRequired,
+  userDetails: PropTypes.object.isRequired,
+  userLikes: PropTypes.array.isRequired,
+};
 
 export default Profile;

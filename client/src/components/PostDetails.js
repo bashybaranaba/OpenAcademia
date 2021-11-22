@@ -1,13 +1,38 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import axios from "axios";
+
+//Components
+import AddComment from "./AddComment";
 
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
 
-function PostDetails() {
+function PostDetails(props) {
+  const [post, setPost] = useState({});
+  const [comments, setComments] = useState([]);
+
+  const getPostData = () => {
+    const id = props.postId;
+    axios.get(`http://localhost:5000/post/${id}`).then((res) => {
+      if (res.data.error) {
+        alert(res.data.error);
+      } else {
+        setPost(res.data.post);
+        setComments(res.data.comments);
+      }
+    });
+  };
+
+  useEffect(() => {
+    getPostData();
+  }, []);
+  useEffect(() => {
+    getPostData();
+  });
+
   return (
     <Box>
       <Box sx={{ margin: 2, display: "flex" }}>
@@ -17,16 +42,10 @@ function PostDetails() {
       <Divider />
       <Box sx={{ margin: 3 }}>
         <Typography variant="h5" component="h1" sx={{ margin: 1 }}>
-          Title
+          {post.title}
         </Typography>
         <Typography variant="body1" sx={{ margin: 1 }}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-          eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-          minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          aliquip ex ea commodo consequat. Duis aute irure dolor in
-          reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-          pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-          culpa qui officia deserunt mollit anim id est laborum.
+          {post.body}
         </Typography>
       </Box>
 
@@ -34,43 +53,32 @@ function PostDetails() {
         <Typography variant="h5" component="h1" sx={{ margin: 1 }}>
           Comments
         </Typography>
+        <AddComment postId={props.postId} />
 
-        <TextField
-          sx={{ m: 2 }}
-          fullWidth
-          label="Add a public comment"
-          variant="standard"
-        />
-        <Button sx={{ ml: 2 }} variant="contained">
-          Submit Comment
-        </Button>
-
-        <Box sx={{ margin: 3 }}>
-          <Box sx={{ margin: 1, display: "flex" }}>
-            <Avatar />
-            <Typography sx={{ margin: 1 }}>Username</Typography>
-          </Box>
-          <Typography variant="subtitle1" sx={{ ml: 2 }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          </Typography>
-        </Box>
-        <Divider />
-        <Box sx={{ margin: 3 }}>
-          <Box sx={{ margin: 1, display: "flex" }}>
-            <Avatar />
-            <Typography sx={{ margin: 1 }}>Username</Typography>
-          </Box>
-          <Typography variant="subtitle1" sx={{ ml: 2 }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-            ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-          </Typography>
-        </Box>
+        {comments &&
+          comments.map((comment) => (
+            <Box>
+              <Box sx={{ margin: 3 }}>
+                <Box sx={{ margin: 1, display: "flex" }}>
+                  <Avatar />
+                  <Typography sx={{ margin: 1 }}>
+                    {comment.comment_by.username}
+                  </Typography>
+                </Box>
+                <Typography variant="subtitle1" sx={{ ml: 2 }}>
+                  {comment.body}
+                </Typography>
+              </Box>
+              <Divider />
+            </Box>
+          ))}
       </Box>
     </Box>
   );
 }
+
+PostDetails.propTypes = {
+  postId: PropTypes.object.isRequired,
+};
 
 export default PostDetails;

@@ -1,20 +1,45 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
+import axios from "axios";
 
+import Chat from "./Chat";
+
+import Avatar from "@mui/material/Avatar";
+import MenuItem from "@mui/material/MenuItem";
+import Dialog from "@mui/material/Dialog";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import Badge from "@mui/material/Badge";
 import Divider from "@mui/material/Divider";
-import TextField from "@mui/material/TextField";
-import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 
 import MailIcon from "@mui/icons-material/Mail";
-import SendIcon from "@mui/icons-material/Send";
 import CloseIcon from "@mui/icons-material/Close";
 
 function Messages() {
   const [open, setOpen] = useState(false);
+  const [openChat, setOpenChat] = useState(false);
+  const [chats, setChats] = useState([]);
+
+  const getChats = () => {
+    axios
+      .get(`http://localhost:5000/getchats`)
+      .then((res) => {
+        if (res.data.error) {
+          alert(res.data.error);
+        } else {
+          setChats(res.data);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+  useEffect(() => {
+    getChats();
+    console.log(chats);
+  }, []);
+  useEffect(() => {
+    getChats();
+  });
 
   const handleOpen = () => {
     setOpen(true);
@@ -22,6 +47,14 @@ function Messages() {
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleOpenChat = () => {
+    setOpenChat(true);
+  };
+
+  const handleCloseChat = () => {
+    setOpenChat(false);
   };
 
   return (
@@ -47,38 +80,27 @@ function Messages() {
         <Divider />
 
         <Box sx={{ width: 350 }}>
-          <Box sx={{ m: 4, p: 2, borderRadius: 4, backgroundColor: "#e8eaf6" }}>
-            <Typography>Message from other User</Typography>
-          </Box>
-          <Box sx={{ m: 4, p: 2, borderRadius: 4, backgroundColor: "#bbdefb" }}>
-            <Typography>Message sent by You</Typography>
-          </Box>
-
-          <Box
-            sx={{
-              position: "absolute",
-              bottom: 0,
-              width: 350,
-            }}
-          >
-            <Divider />
-            <Box sx={{ display: "flex ", pl: 2, pt: 1 }}>
-              <TextField
-                sx={{ m: 1 }}
-                fullWidth
-                id="mesage"
-                label="Type your message"
-                multiline
-                maxRows={4}
-                variant="outlined"
-              />
-              <Tooltip placement="top" title="send">
-                <IconButton sx={{ m: 2 }} size="large" color="inherit">
-                  <SendIcon />
-                </IconButton>
-              </Tooltip>
-            </Box>
-          </Box>
+          {chats &&
+            chats.map((chat) => (
+              <Fragment>
+                <Box component={MenuItem} onClick={handleOpenChat}>
+                  <Box sx={{ m: 1, display: "flex" }}>
+                    <Avatar />
+                    <Typography sx={{ m: 1, ml: 2 }}>
+                      {chat.username}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Dialog
+                  onClose={handleCloseChat}
+                  open={openChat}
+                  fullWidth
+                  maxWidth="sm"
+                >
+                  <Chat chatId={chat._id} />
+                </Dialog>
+              </Fragment>
+            ))}
         </Box>
       </Drawer>
     </Fragment>

@@ -9,12 +9,7 @@ function Home() {
   return (
     <div>
       <Navbar />
-      <Container maxWidth="md">
-        <PostCard />
-        <PostCard />
-        <PostCard />
-        <PostCard />
-      </Container>
+      <Container maxWidth="md"></Container>
     </div>
   );
 }

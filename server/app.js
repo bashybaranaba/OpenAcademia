@@ -24,6 +24,7 @@ require("./models/user");
 require("./models/post");
 require("./models/comment");
 require("./models/like");
+require("./models/message");
 
 app.use(cors());
 
@@ -35,6 +36,7 @@ app.use(require("./routes/auth"));
 app.use(require("./routes/user"));
 app.use(require("./routes/post"));
 app.use(require("./routes/comment"));
+app.use(require("./routes/message"));
 
 app.listen(PORT, () => {
   console.log("Server running on", PORT);

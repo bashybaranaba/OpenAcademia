@@ -1,4 +1,5 @@
 import React, { Fragment, useState } from "react";
+import axios from "axios";
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -26,26 +27,15 @@ function AddPost() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    fetch("http://localhost:5000/createpost", {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: localStorage.getItem("IdToken"),
-      },
-      body: JSON.stringify({
-        title: title,
-        body: content,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.error) {
-          alert(data.error);
-        } else {
-          alert("Post successfully addded");
-          setOpen(false);
-        }
-      });
+    const data = { title: title, body: content };
+    axios.post(`http://localhost:5000/createpost`, data).then((res) => {
+      if (res.data.error) {
+        alert(res.data.error);
+      } else {
+        alert("Post successfully addded");
+        setOpen(false);
+      }
+    });
   };
   return (
     <Fragment>
