@@ -54,7 +54,6 @@ export default function Navbar() {
       anchorEl={anchorEl}
       anchorOrigin={{
         vertical: "top",
-        horizontal: "right",
       }}
       id={menuId}
       keepMounted

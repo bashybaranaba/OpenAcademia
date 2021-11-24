@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
+import { UserContext } from "../App";
+import axios from "axios";
 
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
@@ -14,6 +16,7 @@ import TextField from "@mui/material/TextField";
 import LockIcon from "@mui/icons-material/Lock";
 
 function Login() {
+  const { dispatch } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -21,6 +24,20 @@ function Login() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    const getUserData = () => {
+      axios
+        .get(`http://localhost:5000/user`)
+        .then((res) => {
+          if (res.data.error) {
+            alert(res.data.error);
+          } else {
+            localStorage.setItem("user", JSON.stringify(res.data));
+          }
+        })
+        .catch((err) => console.log(err));
+    };
+
     fetch("http://localhost:5000/login", {
       method: "post",
       headers: {
@@ -37,6 +54,11 @@ function Login() {
           alert(data.error);
         } else {
           localStorage.setItem("IdToken", `Bearer ${data.token}`);
+          getUserData();
+          dispatch({
+            type: "USER",
+            payload: JSON.parse(localStorage.getItem("user")),
+          });
           alert("Success");
           history.push("/");
         }

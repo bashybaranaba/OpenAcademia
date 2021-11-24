@@ -3,12 +3,42 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const requireAuth = require("../middleware/requireAuth");
 const Post = mongoose.model("Post");
+const Comment = mongoose.model("Comment");
 const Like = mongoose.model("Like");
+const multer = require("multer");
+
+var fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads/");
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}_*${file.originalname}`);
+  },
+  fileFilter: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    cb(null, true);
+  },
+});
+
+var fileUpload = multer({ storage: fileStorage }).single("file");
+
+router.post("/uploadFile", (req, res) => {
+  fileUpload(req, res, (err) => {
+    if (err) {
+      return res.json({ success: false, err });
+    }
+    return res.json({
+      success: true,
+      file: res.req.file.path,
+      fileName: res.req.file.filename,
+    });
+  });
+});
 
 //get all posts
 router.get("/getallposts", (req, res) => {
   Post.find()
-    .populate("posted_by", "_id username")
+    .populate("posted_by", "_id username profile_img")
     .sort("-createdAt")
     .then((posts) => {
       res.json({ posts });
@@ -19,10 +49,11 @@ router.get("/getallposts", (req, res) => {
 });
 
 //Get one post and it's comments
-router.get("/post/:post_id", (req, res) => {
-  Post.findOne({ _id: req.params.post_id })
+router.get("/post/:postId", (req, res) => {
+  Post.findOne({ _id: req.params.postId })
+    .populate("posted_by", "_id username profile_img")
     .then((post) => {
-      Comment.find({ post_id: post._id })
+      Comment.find({ post_id: req.params.postId })
         .populate("comment_by", "_id username profile_img")
         .then((comments) => {
           res.json({ post, comments });
@@ -76,13 +107,14 @@ router.get("/like/:post_id", requireAuth, (req, res) => {
     liked_by: req.user._id,
     liked_post: req.params.post_id,
   });
-  like.save();
-  Post.findByIdAndUpdate(
-    { _id: req.params.post_id },
-    { $inc: { like_count: 1 } },
-    { new: true }
-  ).then((post) => {
-    res.json({ post });
+  like.save().then((like) => {
+    Post.findByIdAndUpdate(
+      { _id: req.params.post_id },
+      { $inc: { like_count: 1 } },
+      { new: true }
+    ).then(() => {
+      res.json({ like });
+    });
   });
 });
 

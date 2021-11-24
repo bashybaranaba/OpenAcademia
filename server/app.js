@@ -38,6 +38,8 @@ app.use(require("./routes/post"));
 app.use(require("./routes/comment"));
 app.use(require("./routes/message"));
 
+app.use("/uploads", express.static("uploads"));
+
 app.listen(PORT, () => {
   console.log("Server running on", PORT);
 });

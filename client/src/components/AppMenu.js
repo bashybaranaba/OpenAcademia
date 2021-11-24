@@ -19,7 +19,7 @@ import HelpIcon from "@mui/icons-material/Help";
 import TagIcon from "@mui/icons-material/Tag";
 
 function AppMenu() {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   const handleOpen = () => {
     setOpen(true);
@@ -47,8 +47,8 @@ function AppMenu() {
         onClose={handleClose}
         variant="persistent"
       >
-        <Box sx={{ display: "flex", m: 1.5 }}>
-          <Typography sx={{ m: 1 }}>Open Academia</Typography>
+        <Box sx={{ display: "flex", m: 1.5, color: "#1565c0" }}>
+          <Typography sx={{ m: 1, ml: 4 }}>Open Academia</Typography>
           <Box sx={{ flexGrow: 1 }} />
           <IconButton onClick={handleClose}>
             <ChevronLeftIcon />
@@ -65,7 +65,7 @@ function AppMenu() {
                 index === 0 ? "/" : index === 1 ? "/" : index === 2 ? "/" : "/"
               }
             >
-              <ListItemIcon>
+              <ListItemIcon sx={{ color: "#263238" }}>
                 {index === 0 ? (
                   <HomeIcon />
                 ) : index === 1 ? (

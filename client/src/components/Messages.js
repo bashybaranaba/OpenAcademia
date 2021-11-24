@@ -12,12 +12,15 @@ import Box from "@mui/material/Box";
 import Badge from "@mui/material/Badge";
 import Divider from "@mui/material/Divider";
 import Typography from "@mui/material/Typography";
+import LinearProgress from "@mui/material/LinearProgress";
+import Grid from "@mui/material/Grid";
 
 import MailIcon from "@mui/icons-material/Mail";
 import CloseIcon from "@mui/icons-material/Close";
 
 function Messages() {
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [openChat, setOpenChat] = useState(false);
   const [chats, setChats] = useState([]);
 
@@ -29,6 +32,7 @@ function Messages() {
           alert(res.data.error);
         } else {
           setChats(res.data);
+          setLoading(false);
         }
       })
       .catch((err) => console.log(err));
@@ -36,9 +40,11 @@ function Messages() {
   useEffect(() => {
     getChats();
     console.log(chats);
-  }, []);
+  }, [chats]);
   useEffect(() => {
-    getChats();
+    if (open) {
+      getChats();
+    }
   });
 
   const handleOpen = () => {
@@ -80,27 +86,43 @@ function Messages() {
         <Divider />
 
         <Box sx={{ width: 350 }}>
-          {chats &&
-            chats.map((chat) => (
-              <Fragment>
-                <Box component={MenuItem} onClick={handleOpenChat}>
-                  <Box sx={{ m: 1, display: "flex" }}>
-                    <Avatar />
-                    <Typography sx={{ m: 1, ml: 2 }}>
-                      {chat.username}
-                    </Typography>
-                  </Box>
-                </Box>
-                <Dialog
-                  onClose={handleCloseChat}
-                  open={openChat}
-                  fullWidth
-                  maxWidth="sm"
-                >
-                  <Chat chatId={chat._id} />
-                </Dialog>
-              </Fragment>
-            ))}
+          {!loading ? (
+            <Box>
+              {chats &&
+                chats.map((chat) => (
+                  <Fragment>
+                    <Box component={MenuItem} onClick={handleOpenChat}>
+                      <Box sx={{ m: 1, display: "flex" }}>
+                        <Avatar
+                          src={`http://localhost:5000/${chat.profile_img}`}
+                        />
+                        <Typography sx={{ m: 1, ml: 2 }}>
+                          {chat.username}
+                        </Typography>
+                      </Box>
+                    </Box>
+                    <Dialog
+                      onClose={handleCloseChat}
+                      open={openChat}
+                      fullWidth
+                      maxWidth="sm"
+                    >
+                      <Chat
+                        chatId={chat._id}
+                        username={chat.username}
+                        profile_img={chat.profile_img}
+                        open={openChat}
+                      />
+                    </Dialog>
+                  </Fragment>
+                ))}
+            </Box>
+          ) : (
+            <Grid align="center" sx={{ m: 2 }}>
+              <LinearProgress />
+              <Typography variant="caption">Fetching messages..</Typography>
+            </Grid>
+          )}
         </Box>
       </Drawer>
     </Fragment>

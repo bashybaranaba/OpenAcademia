@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
-
+import { UserContext } from "../App";
 import Navbar from "../components/Navbar";
 import Profile from "../components/Profile";
 function Userprofile(props) {
+  const { state } = useContext(UserContext);
   const [userDetails, setUserDetails] = useState({});
+  const [followers, setFollowers] = useState([]);
   const [posts, setPosts] = useState([]);
-  const [likes, setLikes] = useState([]);
 
   const getUserData = (username) => {
     axios
@@ -16,21 +17,19 @@ function Userprofile(props) {
           alert(res.data.error);
         } else {
           setUserDetails(res.data.user);
+          setFollowers(res.data.user.followers);
           setPosts(res.data.posts);
-          setLikes(res.data.likes);
         }
       })
       .catch((err) => console.log(err));
   };
 
   const userName = props.match.params.username;
+  const likes = state ? state.likes : [];
 
   useEffect(() => {
     getUserData(userName);
-  }, []);
-  useEffect(() => {
-    getUserData(userName);
-  });
+  }, [userName]);
 
   return (
     <div>
@@ -38,7 +37,12 @@ function Userprofile(props) {
       {userDetails === null ? (
         <p>Loading...</p>
       ) : (
-        <Profile posts={posts} userDetails={userDetails} userLikes={likes} />
+        <Profile
+          posts={posts}
+          userDetails={userDetails}
+          followers={followers}
+          userLikes={likes}
+        />
       )}
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import axios from "axios";
 
@@ -9,6 +9,10 @@ import TextField from "@mui/material/TextField";
 function AddComment(props) {
   const [content, setContent] = useState("");
 
+  const onContentChange = (event) => {
+    setContent(event.currentTarget.value);
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     const id = props.postId;
@@ -17,20 +21,21 @@ function AddComment(props) {
       if (res.data.error) {
         alert(res.data.error);
       } else {
-        alert("Comment successfully posted");
+        setContent("");
       }
     });
   };
 
   return (
-    <Box>
+    <Box sx={{ m: 1 }}>
       <TextField
         sx={{ m: 2 }}
         fullWidth
         id="content"
         label="Add a public comment"
         variant="standard"
-        onChange={(e) => setContent(e.target.value)}
+        onChange={onContentChange}
+        value={content}
       />
       <Button onClick={handleSubmit} sx={{ ml: 2 }} variant="contained">
         Submit Comment

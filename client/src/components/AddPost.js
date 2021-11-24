@@ -1,5 +1,6 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useContext } from "react";
 import axios from "axios";
+import { UserContext } from "../App";
 
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -13,6 +14,7 @@ import TextField from "@mui/material/TextField";
 import AddIcon from "@mui/icons-material/Add";
 
 function AddPost() {
+  const { dispatch } = useContext(UserContext);
   const [open, setOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -34,12 +36,13 @@ function AddPost() {
       } else {
         alert("Post successfully addded");
         setOpen(false);
+        dispatch({ type: "ADDPOST", payload: res.data.post });
       }
     });
   };
   return (
     <Fragment>
-      <Tooltip placement="top" title="add">
+      <Tooltip placement="top" title="create post">
         <IconButton onClick={handleOpen}>
           <AddIcon sx={{ color: "#fff" }} />
         </IconButton>
